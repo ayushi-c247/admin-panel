@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  authapp:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+    container_name: authapp
+    env_file:
+      - ./apps/auth/.env
+    ports:
+      - "3006:3006"
+    volumes:
+      - .:/home/node/app
+      - /home/node/app/node_modules
+    command: npm run start
