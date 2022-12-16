@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-export const showSuccess = (message) => {
+export const showSuccess = async (message) => {
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -9,14 +9,14 @@ export const showSuccess = (message) => {
     timerProgressBar: true,
   });
 
-  Toast.fire({
+  await Toast.fire({
     icon: "success",
     title: message,
   });
+  return;
 };
 
-
-export const showError = (message) => {
+export const showError =async (message) => {
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -26,8 +26,9 @@ export const showError = (message) => {
     width: 350,
   });
 
-  Toast.fire({
+  await Toast.fire({
     icon: "error",
     title: message,
   });
+  return;
 };

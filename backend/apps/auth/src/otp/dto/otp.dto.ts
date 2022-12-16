@@ -1,4 +1,4 @@
-import { IsEmail, IsString, IsOptional, IsNotEmpty, IsDate } from 'class-validator';
+import { IsString, IsNotEmpty, IsDate } from 'class-validator';
 
 
 export class OtpDto {

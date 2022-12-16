@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import {  UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
-import "./login.css";
-
+import { useDispatch } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import "../css/common.css";
 import { otpSlice } from "../redux/slice/auth-slice";
 
 const Otp = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email");
+  const verifyToken = searchParams.get("verifyToken");
+
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    const { otp } = values;
     setLoading(true);
-    dispatch(otpSlice({ otp: values.otp}))
-      .unwrap()
+    dispatch(otpSlice({ otp, email, verifyToken }))
       .then(() => {
-        navigate("/success");
-        window.location.reload();
+        navigate("/reset-password");
       })
       .catch(() => {
         setLoading(false);
@@ -26,7 +29,6 @@ const Otp = () => {
   return (
     <div className="from-vertical-center">
       <div className="form-center">
-        <h2 className="main-heading"> Enter confirmation code</h2>
         <Form
           name="normal_login"
           className="login-form"
@@ -36,11 +38,12 @@ const Otp = () => {
           onFinish={onFinish}
         >
           <div className="subHeading">
-          <h3 className="user-login">Enter confirmation code</h3>
-            <h4>Enter the 4-digit code we sent to your register mail</h4>
+            <h3 className="user-login">Enter confirmation code</h3>
+            <h4>Enter the 6-digit code we sent to your register mail</h4>
           </div>
           <Form.Item
-            name="email"
+            name="otp"
+            type="number"
             rules={[
               {
                 required: true,

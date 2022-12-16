@@ -11,15 +11,19 @@ export class OtpService {
   async createOtp(data: any) {
     return await this.otpRepository.create(data);
   }
-  async deleteOtp(){
+  async verifyOtp(){
     return await this.otpRepository.deleteMany({});
   }
   //Otp varification API
   async getOtp(otpDto: any) {
-    let email = decryption(otpDto.email);
-    const getUser = await this.otpRepository.findOne({ email });
+    const email = decryption(otpDto.email);
+    const verifyToken = decryption(otpDto.verifyToken);
+    console.log("email ,verifyToken-----otp-------------",email ,verifyToken);
+    
+    const getUser = await this.otpRepository.findOne({ email ,verifyToken});
+    console.log("getUser---------------------getUser-------------",getUser);
     if (getUser) {
-      await this.otpRepository.deleteOne({ email });
+      await this.otpRepository.deleteMany({email});
       return 'Otp verify successfully!!';
     }else{
         await this.otpRepository.deleteOne({ email });

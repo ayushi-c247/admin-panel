@@ -64,7 +64,7 @@ export class ForgetPasswordDto {
   verifyToken: string;
 }
 export class ResetPasswordDto {
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
   email: string;
   @IsString()
@@ -75,6 +75,4 @@ export class ResetPasswordDto {
   password: string;
   @IsNotEmpty()
   confirmPassword: string;
-  @IsNotEmpty()
-  otp: string;
 }

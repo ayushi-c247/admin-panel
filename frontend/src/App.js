@@ -12,6 +12,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { loginSlice } from "./redux/slice/auth-slice";
 import ForgotPassword from "./components/forgotPassword";
 import Success from "./components/success";
+import Otp from "./components/otp";
+import ResetPassword from "./components/resetPassword";
 
 function App() {
   return (
@@ -20,6 +22,9 @@ function App() {
         <Route path="/" element={<LoginForm />} />
         <Route path="/forget-password" element={<ForgotPassword />} />
         <Route path="/success" element={<Success />} />
+        <Route path="/otp" element={<Otp />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </div>
   );

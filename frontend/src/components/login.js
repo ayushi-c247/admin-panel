@@ -4,7 +4,7 @@ import { Button, Form, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import "./login.css";
+import "../css/common.css";
 import { clearMessage } from "../redux/slice/message-slice";
 import { loginSlice } from "../redux/slice/auth-slice";
 
@@ -25,10 +25,9 @@ const LoginForm = () => {
     }
   }, [isLoggedIn]);
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
     setLoading(true);
     dispatch(loginSlice({ email: values.email, password: values.password }))
-      .unwrap()
+    //  .unwrap()
       .then(() => {
         navigate("/dashboard");
         window.location.reload();

@@ -1,0 +1,29 @@
+.site-card-border-less-wrapper {
+    padding: 30px;
+    background: #ececec;
+    margin: 0 auto;
+    display: block;
+  }
+  .ant-card-block {
+    max-width: 300px;
+    margin: 0 auto;
+    display: block;
+    margin-top: 130px;
+}
+  .login-form-button {
+    size: 100%;
+    background-image: linear-gradient(to right, #000046 0%, #1CB5E0 51%, #000046 100%);
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+    display: block;
+
+    background-position: right center;
+    /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+}

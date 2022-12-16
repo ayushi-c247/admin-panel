@@ -138,20 +138,24 @@ export class UserService {
         verifyToken: verificationToken,
         email: user.email,
       };
-      let getOtp = await this.otpService.createOtp(otpdataCreate);
+      let otpGenerated = await this.otpService.createOtp(otpdataCreate);
 
       await this.emailService.setTemplate(AvailableTemplates.OTP, {
         fullName: `${user.fullName}`,
         verifyToken: verificationToken,
         email: encryptedEmail,
-        otp: getOtp.otp,
+        otp: otpGenerated.otp,
       });
       await this.emailService.sendMail(user.email);
-      return { message:"Link send to your mail",verificationToken, encryptedEmail, otp: getOtp.otp };
+      return {
+        message: 'Link send to your mail',
+        verificationToken,
+        encryptedEmail,
+        otp: otpGenerated.otp,
+      };
     }
     throw new HttpException('User Not Found!!', 404);
   }
-
   // Verify API for Forget Password
   async verifyLink(forgetPasswordDto: ForgetPasswordDto) {
     const user = await this.userRepository.findOne({
@@ -166,28 +170,25 @@ export class UserService {
 
   //Reset Password API
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const email = decryption(resetPasswordDto.email);
+    const verifyToken = decryption(resetPasswordDto.verifyToken);
+    console.log("reset passwords========================", email,
+    verifyToken);
+    
     const user = await this.userRepository.findOne({
-      email: resetPasswordDto.email,
-      verifyToken: resetPasswordDto.verifyToken,
+      email,
+      verifyToken,
     });
     if (user) {
-      let getOtp = await this.otpService.getOtp({
-        otp: resetPasswordDto.otp,
-        email: resetPasswordDto.email,
-        verifyToken: resetPasswordDto.verifyToken,
-      });
-      if (getOtp) {
-        if (resetPasswordDto.confirmPassword === resetPasswordDto.password) {
-          const hashPassword = await bcrypt.hash(resetPasswordDto.password, 10);
-          await this.userRepository.findOneAndUpdate(
-            { email: user.email },
-            { password: hashPassword },
-          );
-          await this.otpService.deleteOtp();
-          return 'Password changed successfully!!';
-        } else {
-          return 'Please enter correct password!!';
-        }
+      if (resetPasswordDto.confirmPassword === resetPasswordDto.password) {
+        const hashPassword = await bcrypt.hash(resetPasswordDto.password, 10);
+        await this.userRepository.findOneAndUpdate(
+          { email: user.email },
+          { password: hashPassword, verifyToken: '' },
+        );
+        return 'Password changed successfully!!';
+      } else {
+        return 'Please enter correct password!!';
       }
     }
     throw new HttpException('Link Expire', 400);

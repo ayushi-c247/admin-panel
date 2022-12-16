@@ -4,7 +4,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "./login.css";
+import "../css/common.css";
 import { forgetPasswordSlice } from "../redux/slice/auth-slice";
 
 const ForgotPassword = () => {
@@ -13,7 +13,6 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
     setLoading(true);
     dispatch(forgetPasswordSlice({ email: values.email }))
       .unwrap()

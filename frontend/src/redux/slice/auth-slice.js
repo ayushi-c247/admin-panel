@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import authService from "../../services/auth-service";
-import { setMessage } from "./message-slice";
 import { showSuccess, showError } from "../../utills/toasterMessages";
 
 const token = localStorage.getItem("token");
@@ -24,14 +23,14 @@ export const signupSlice = createAsyncThunk(
         file,
         mainRole
       );
-      thunkAPI.dispatch(showSuccess(response.message));
+      showSuccess(response.message);
       return response.data;
     } catch (error) {
       const message =
-        (error.response && error.response.data && error.response.message) ||
-        error.message ||
-        error.toString();
-      thunkAPI.dispatch(showError(message));
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.response.data.message;
+      await showError(message);
       return thunkAPI.rejectWithValue();
     }
   }
@@ -43,13 +42,14 @@ export const loginSlice = createAsyncThunk(
     try {
       const response = await authService.login(email, password);
       console.log("response", response);
-      thunkAPI.dispatch(showSuccess(response.message));
-      return { data: response.data };
+      await showSuccess(response.message);
+      return { data: response.access_token };
     } catch (error) {
-      console.log("---------------",error);
       const message =
-        error.response && error.response.data && error.response.data.message || error.response.data.message
-      thunkAPI.dispatch(showError(message));
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.response.data.message;
+      await showError(message);
       return thunkAPI.rejectWithValue();
     }
   }
@@ -64,14 +64,57 @@ export const forgetPasswordSlice = createAsyncThunk(
   async ({ email }, thunkAPI) => {
     try {
       const response = await authService.forgetPassword(email);
-      console.log("forgot password mail---------",response.message);
-      thunkAPI.dispatch(showSuccess(response.message));
+      await showSuccess(response.message);
       return response.data;
     } catch (error) {
-      console.log("---------------",error);
       const message =
-      error.response && error.response.data && error.response.data.message || error.response.data.message
-      thunkAPI.dispatch(showError(message));
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.response.data.message;
+      await showError(message);
+      return thunkAPI.rejectWithValue();
+    }
+  }
+);
+export const otpSlice = createAsyncThunk(
+  "otp",
+  async ({ otp, email, verifyToken }, thunkAPI) => {
+    try {
+      const response = await authService.otp(otp, email, verifyToken);
+      console.log("otp, email, verifyToken", otp, email, verifyToken);
+
+      await showSuccess(response.message);
+      
+      return { email, verifyToken,otp };
+    } catch (error) {
+      const message =
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.response.data.message;
+      await showError(message);
+      return thunkAPI.rejectWithValue();
+    }
+  }
+);
+
+export const resetPasswordSlice = createAsyncThunk(
+  "reset-password",
+  async ({ password, confirmPassword, email, verifyToken }, thunkAPI) => {
+    try {
+      const response = await authService.resetPassword(
+        password,
+        confirmPassword,
+        email,
+        verifyToken
+      );
+      await showSuccess(response.message);
+    } catch (error) {
+      console.log("reset password==============",error);
+      const message =
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.response.data.message;
+      await showError(message);
       return thunkAPI.rejectWithValue();
     }
   }
@@ -103,6 +146,19 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
     },
     [forgetPasswordSlice.rejected]: (state, action) => {
+      state.isLoggedIn = false;
+    },
+    [otpSlice.fulfilled]: (state, action) => {
+      state.otp=action.payload
+    },
+    [otpSlice.rejected]: (state, action) => {
+      state.isLoggedIn = false;
+    },
+    [resetPasswordSlice.fulfilled]: (state, action) => {
+      state.isLoggedIn = false;
+      state.resetPassword=action.payload
+    },
+    [resetPasswordSlice.rejected]: (state, action) => {
       state.isLoggedIn = false;
     },
   },
